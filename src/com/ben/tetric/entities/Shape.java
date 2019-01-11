@@ -177,7 +177,7 @@ public class Shape {
     }
 
     public void drawUnit(Graphics g, int x, int y, int width, int height) {
-        g.draw3DRect(x, y, width, height, true);
+        g.fill3DRect(x, y, width, height, true);
     }
     
     public void speedDown(){

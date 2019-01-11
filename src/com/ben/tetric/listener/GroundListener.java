@@ -8,5 +8,5 @@ public interface GroundListener {
 
     void fullLineDeleted(Ground ground, int deleteLineCount);
 
-    void groundIsFull();
+    void groundIsFull(Ground ground);
 }

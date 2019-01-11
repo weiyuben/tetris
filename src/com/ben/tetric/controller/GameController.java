@@ -261,7 +261,7 @@ public class GameController extends KeyAdapter implements ShapeListener, GroundL
     }
 
     @Override
-    public void groundIsFull() {
+    public void groundIsFull(Ground ground) {
         if (playing) {
             playing = false;
             for (GameListener l : listeners) {

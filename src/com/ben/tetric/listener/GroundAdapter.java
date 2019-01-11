@@ -15,7 +15,7 @@ public class GroundAdapter implements GroundListener{
     }
 
     @Override
-    public void groundIsFull() {
+    public void groundIsFull(Ground ground) {
 
     }
 }

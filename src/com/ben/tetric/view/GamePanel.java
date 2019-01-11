@@ -52,6 +52,7 @@ public class GamePanel extends JPanel {
             if (shape != null)
                 shape.drawMe(og);
             this.paint(this.getGraphics());
+
         }
     }
 

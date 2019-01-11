@@ -12,9 +12,9 @@ import java.util.Random;
 import java.util.Set;
 
 public class Ground {
-    private Set<GroundListener> listeners = new HashSet<>();
-    private UnitType[][] obstacles = new UnitType[Global.WIDTH][Global.HEIGHT];
-    private Color stubbornObstacleColor = UnitType.STUBBORN_OBSTACLE
+    protected Set<GroundListener> listeners = new HashSet<>();
+    protected UnitType[][] obstacles = new UnitType[Global.WIDTH][Global.HEIGHT];
+    protected Color stubbornObstacleColor = UnitType.STUBBORN_OBSTACLE
             .getColor();
 
     public static final Color DEFAULT_GRIDDING_COLOR = Color.LIGHT_GRAY;
@@ -67,11 +67,12 @@ public class Ground {
     }
 
     public void generateAStubbornStochasticObstacle() {
+        Random r = new Random();
         if (Global.HEIGHT < 5) {
             return;
         }
-        int y = random.nextInt(5) + Global.HEIGHT - 5;
-        int x = random.nextInt(Global.WIDTH);
+        int y = r.nextInt(5) + Global.HEIGHT - 5;
+        int x = r.nextInt(Global.WIDTH);
         addStubbornObstacle(x, y);
     }
 
@@ -92,25 +93,32 @@ public class Ground {
         int left = shape.getLeft();
         int top = shape.getTop();
 
-        for (int x = 0; x < 4; x++) {
-            for (int y = 0; y < 4; y++) {
+        
+        for (int x = 0; x < 4; x++)
+            for (int y = 0; y < 4; y++)
                 if (left + x < Global.WIDTH && top + y < Global.HEIGHT) {
-                    if (shape.isMember(x, y, false)) {
+                    if (shape.isMember(x, y, false))
+                        /**
+                         * 如果超出上边界了, 就是放满了
+                         */
                         if (top + y < 0) {
                             full = true;
-                            for (GroundListener gl : listeners) {
-                                gl.groundIsFull();
-                            }
+                            for (GroundListener l : listeners)
+                                l.groundIsFull(this);
                         } else {
-                            obstacles[left + x][top + y].cloneProperties(UnitType.OBSTACLE);
-                            obstacles[left + x][top + y].setColor(colorfulSupport ? shape.getColor() : obstacleColor);
+                            /**
+                             * 先变成障碍物
+                             */
+                            obstacles[left + x][top + y]
+                                    .cloneProperties(UnitType.OBSTACLE);
+                            obstacles[left + x][top + y]
+                                    .setColor(colorfulSupport ? shape
+                                            .getColor() : obstacleColor);
                         }
-                    }
                 }
-
-            }
-        }
-
+        /**
+         * 扫描并删除满行
+         */
         deleteFullLine();
     }
 
@@ -227,19 +235,6 @@ public class Ground {
         obstacles[x][y].cloneProperties(UnitType.STUBBORN_OBSTACLE);
     }
 
-    public void drawGridding(Graphics g, int x, int y, int width, int height) {
-        g.drawRect(x, y, width, height);
-    }
-
-    public void drawStubbornObstacle(Graphics g, int x, int y, int width,
-                                     int height) {
-        g.fill3DRect(x, y, width, height, true);
-    }
-
-    public void drawObstacle(Graphics graphics, int x, int y, int width, int height) {
-        graphics.draw3DRect(x,y,width,height,true);
-    }
-
     public void drawMe(Graphics graphics) {
         for (int x = 0; x < Global.WIDTH; x++) {
             for (int y = 0; y < Global.HEIGHT; y++) {
@@ -263,6 +258,18 @@ public class Ground {
         }
     }
 
+    public void drawGridding(Graphics g, int x, int y, int width, int height) {
+        g.drawRect(x, y, width, height);
+    }
+
+    public void drawStubbornObstacle(Graphics g, int x, int y, int width,
+                                     int height) {
+        g.fill3DRect(x, y, width, height, true);
+    }
+
+    public void drawObstacle(Graphics graphics, int x, int y, int width, int height) {
+        graphics.fill3DRect(x,y,width,height,true);
+    }
     public Color getStubbornObstacleColor() {
         return stubbornObstacleColor;
     }
@@ -311,9 +318,6 @@ public class Ground {
         this.colorfulSupport = colorfulSupport;
     }
 
-    public void setFull(boolean full) {
-        this.full = full;
-    }
 
     public void addGroundListener(GroundListener listener) {
         if (listener != null) {
